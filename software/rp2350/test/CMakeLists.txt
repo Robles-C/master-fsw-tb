@@ -25,3 +25,4 @@ function(add_unit_test name)
 endfunction()
 
 add_unit_test(smoke)
+add_unit_test(tmp36 ${SRC_DIR}/drivers/tmp36_convert.c)
