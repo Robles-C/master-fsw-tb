@@ -8,6 +8,9 @@
 /* Loop rates */
 #define HEARTBEAT_PERIOD_MS     500U
 
+/* Print rate*/
+#define TMP_PRINT_PERIOD_MS     1000U
+
 /* RS-485 */
 #define RS485_BAUD              115200U
 

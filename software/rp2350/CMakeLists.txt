@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.13)
 
 set(PICO_BOARD pico2 CACHE STRING "Board type")
 
+# Writes build/compile_commands.json so the editor knows the SDK include paths
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Must come before project()
 include(pico_sdk_import.cmake)
 
@@ -15,6 +18,8 @@ pico_sdk_init()
 # Project sources. Add each new module here.
 set(FW_SOURCES
     src/main.c
+    src/drivers/tmp36.c
+    src/drivers/tmp36_convert.c
 )
 
 add_executable(pico2_bridge ${FW_SOURCES})
@@ -28,6 +33,7 @@ set_source_files_properties(${FW_SOURCES} PROPERTIES
 
 target_link_libraries(pico2_bridge PRIVATE
     pico_stdlib
+    hardware_adc
 )
 
 # UART0 belongs to RS-485; debug printf goes over USB only.
