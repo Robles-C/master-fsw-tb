@@ -20,6 +20,8 @@ set(FW_SOURCES
     src/main.c
     src/drivers/tmp36.c
     src/drivers/tmp36_convert.c
+    src/drivers/fan.c
+    src/drivers/fan_convert.c
 )
 
 add_executable(pico2_bridge ${FW_SOURCES})
@@ -34,6 +36,7 @@ set_source_files_properties(${FW_SOURCES} PROPERTIES
 target_link_libraries(pico2_bridge PRIVATE
     pico_stdlib
     hardware_adc
+    hardware_pwm
 )
 
 # UART0 belongs to RS-485; debug printf goes over USB only.
