@@ -22,6 +22,8 @@ set(FW_SOURCES
     src/drivers/tmp36_convert.c
     src/drivers/fan.c
     src/drivers/fan_convert.c
+    src/drivers/servo.c
+    src/drivers/servo_convert.c
 )
 
 add_executable(pico2_bridge ${FW_SOURCES})
