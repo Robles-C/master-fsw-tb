@@ -20,9 +20,12 @@ void fan_init(void)
     const uint32_t slice = pwm_gpio_to_slice_num(PIN_FAN);
     pwm_config cfg = pwm_get_default_config();
 
-    s_top = fan_pwm_top(clock_get_hz(clk_sys), FAN_PWM_FREQ_HZ);
+    const uint32_t clk_hz = clock_get_hz(clk_sys);
+    const uint8_t div = fan_pwm_div(clk_hz, FAN_PWM_FREQ_HZ);
 
-    pwm_config_set_clkdiv_int(&cfg, 1U);
+    s_top = fan_pwm_top(clk_hz, div, FAN_PWM_FREQ_HZ);
+
+    pwm_config_set_clkdiv_int(&cfg, div);
     pwm_config_set_wrap(&cfg, s_top);
 
     /* init at 0*/

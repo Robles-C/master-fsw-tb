@@ -21,10 +21,15 @@ void fan_init(void);
 /* Sets fan duty in percent. Values above 100 are treated as 100. */
 void fan_set_percent(uint8_t percent);
 
-/* Returns the PWM TOP (wrap) value for divider 1: clk_hz / freq_hz - 1.
- * Clamped to FAN_PWM_TOP_MAX if freq_hz is too low (or 0) for 16 bits.
- * No hardware access. */
-uint16_t fan_pwm_top(uint32_t clk_hz, uint32_t freq_hz);
+/* Returns the smallest integer clock divider (1-255) that lets one PWM cycle
+ * at freq_hz fit in FAN_PWM_TOP_MAX. Smallest = finest duty resolution.
+ * Clamped to 255 if freq_hz is too low (or 0). No hardware access. */
+uint8_t fan_pwm_div(uint32_t clk_hz, uint32_t freq_hz);
+
+/* Returns the PWM TOP (wrap) value: clk_hz / (div * freq_hz) - 1.
+ * div 0 is treated as 1. Clamped to FAN_PWM_TOP_MAX if the result doesn't
+ * fit (or freq_hz is 0). No hardware access. */
+uint16_t fan_pwm_top(uint32_t clk_hz, uint8_t div, uint32_t freq_hz);
 
 /* Converts percent (0-100, clamped above 100) to a PWM level for the given
  * TOP: percent * (top + 1) / 100, so 100 % returns top + 1 (always high).

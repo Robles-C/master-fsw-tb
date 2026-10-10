@@ -17,7 +17,7 @@
 /* PWM frequencies */
 #define MOTOR_PWM_FREQ_HZ       20000U
 #define SERVO_PWM_FREQ_HZ       50U
-#define FAN_PWM_FREQ_HZ         25000U
+#define FAN_PWM_FREQ_HZ         25U     /* slow PWM: 2-wire fan stalls at 25 kHz */
 
 /* Servo pulse range and travel. to be confirmed*/
 #define SERVO_MIN_PULSE_US      500U    /* pulse at 0 deg */
