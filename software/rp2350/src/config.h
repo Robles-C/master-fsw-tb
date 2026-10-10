@@ -17,11 +17,14 @@
 /* PWM frequencies */
 #define MOTOR_PWM_FREQ_HZ       20000U
 #define SERVO_PWM_FREQ_HZ       50U
-#define FAN_PWM_FREQ_HZ         25U     /* slow PWM: 2-wire fan stalls at 25 kHz */
+#define FAN_PWM_FREQ_HZ         10U     /* slow PWM: 2-wire fan stalled at 25 kHz */
 
-/* Servo pulse range and travel. to be confirmed*/
-#define SERVO_MIN_PULSE_US      500U    /* pulse at 0 deg */
-#define SERVO_MAX_PULSE_US      2500U   /* pulse at SERVO_RANGE_DEG */
-#define SERVO_RANGE_DEG         180U
+/* Fan minimum running duty: callers treat anything lower as off */
+#define FAN_MIN_DUTY_PCT        50U
+
+/* Servo pulse range and travel */
+#define SERVO_MIN_PULSE_US      700U    /* pulse at 0 deg (rightmost) */
+#define SERVO_MAX_PULSE_US      1653U   /* pulse at SERVO_RANGE_DEG (leftmost) */
+#define SERVO_RANGE_DEG         180U    /* linear: 90 deg = 1176 us (center) */
 
 #endif /* CONFIG_H */
