@@ -11,6 +11,7 @@
 #include "board_pins.h"
 #include "config.h"
 #include "drivers/fan.h"
+#include "drivers/motor.h"
 #include "drivers/servo.h"
 #include "drivers/tmp36.h"
 
@@ -18,6 +19,7 @@
 #define FAN_BRINGUP_STEP_PCT        5U
 #define SERVO_BRINGUP_STEP_DEG      10U
 #define SERVO_BRINGUP_FINE_DEG      1U
+#define MOTOR_BRINGUP_STEP_PCT      10
 
 int main(void)
 {
@@ -28,6 +30,7 @@ int main(void)
     tmp36_init();
     fan_init();
     servo_init();
+    motor_init();
 
     bool led_on = false;
     uint32_t last_heartbeat_ms = to_ms_since_boot(get_absolute_time());
@@ -35,6 +38,7 @@ int main(void)
 
     uint8_t fan_pct = 0U;
     uint16_t servo_deg = SERVO_RANGE_DEG / 2U;
+    int8_t motor_cmd = 0;
 
     for (;;) {
         const uint32_t now_ms = to_ms_since_boot(get_absolute_time());
@@ -50,7 +54,9 @@ int main(void)
          * no key is waiting.
          *   fan:   '+'/'-' step, '0' off, 'f' full
          *   servo: 'r' right (0 deg), 'c' center, 'l' left (max deg),
-         *          ']'/'[' +/-10 deg, '}'/'{' +/-1 deg */
+         *          ']'/'[' +/-10 deg, '}'/'{' +/-1 deg
+         *   motor: 'w'/'s' +/-10 % (negative = reverse), 'x' coast,
+         *          'b' brake */
         const int key = getchar_timeout_us(0U);
         if (key != PICO_ERROR_TIMEOUT) {
             bool fan_changed = true;
@@ -94,6 +100,28 @@ int main(void)
                 servo_deg = SERVO_RANGE_DEG;
             } else {
                 servo_changed = false;
+            }
+
+            if ((key == 'w') &&
+                (motor_cmd <= (100 - MOTOR_BRINGUP_STEP_PCT))) {
+                motor_cmd = (int8_t)(motor_cmd + MOTOR_BRINGUP_STEP_PCT);
+                motor_set(motor_cmd);
+                printf("motor -> %d %%\n", (int)motor_cmd);
+            } else if ((key == 's') &&
+                       (motor_cmd >= (-100 + MOTOR_BRINGUP_STEP_PCT))) {
+                motor_cmd = (int8_t)(motor_cmd - MOTOR_BRINGUP_STEP_PCT);
+                motor_set(motor_cmd);
+                printf("motor -> %d %%\n", (int)motor_cmd);
+            } else if (key == 'x') {
+                motor_cmd = 0;
+                motor_set(motor_cmd);
+                printf("motor -> coast\n");
+            } else if (key == 'b') {
+                motor_cmd = 0;
+                motor_brake();
+                printf("motor -> brake\n");
+            } else {
+                /* not a motor key */
             }
 
             if (fan_changed) {

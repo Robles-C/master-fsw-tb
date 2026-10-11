@@ -24,6 +24,8 @@ set(FW_SOURCES
     src/drivers/fan_convert.c
     src/drivers/servo.c
     src/drivers/servo_convert.c
+    src/drivers/motor.c
+    src/drivers/motor_convert.c
 )
 
 add_executable(pico2_bridge ${FW_SOURCES})
